@@ -1,0 +1,43 @@
+configuration:
+  service_token:
+    name: Service token
+    description: Required private token of at least 32 characters. Use the same token in the integration, without a Bearer prefix.
+  api_key:
+    name: Octopus API key
+    description: Enter only in this UI. Set together with account number, or leave both blank for offline mode.
+  account_number:
+    name: Octopus account number
+    description: Must be set together with the API key; leave both blank for offline mode.
+  timezone:
+    name: Reporting timezone
+    description: IANA timezone, normally Europe/London; calendar periods respect daylight saving time.
+  sync_interval_seconds:
+    name: Sync interval (seconds)
+    description: Between 300 and 86400 seconds. Supplier readings are delayed, not live power.
+  initial_days:
+    name: Initial history (days)
+    description: Between 1 and 730 days. Historical service data is not automatically backfilled into Home Assistant statistics.
+  lookback_days:
+    name: Correction lookback (days)
+    description: Between 1 and 730 days; re-fetch recent readings to capture supplier corrections.
+  payment_method:
+    name: Payment method
+    description: Choose DIRECT_DEBIT or NON_DIRECT_DEBIT to match applicable tariff rates.
+  gas_units:
+    name: Gas meter units
+    description: List unique meter_id and unit entries using kwh or m3. Get the full meter ID from the authenticated meters API. Never guess units.
+    fields:
+      meter_id:
+        name: Meter ID
+        description: Full gas meter ID returned by the service, including meter point and serial.
+      unit:
+        name: Unit
+        description: kwh or m3, verified against your meter and supplier readings.
+  calorific_value:
+    name: Calorific value
+    description: Used for estimated m3 gas conversion; greater than zero and at most 100.
+  correction_factor:
+    name: Gas correction factor
+    description: Used for estimated m3 gas conversion; greater than zero and at most 2.
+network:
+  8080/tcp: Optional LAN API port. Leave blank for internal Home Assistant access; never expose publicly.

@@ -1,8 +1,30 @@
 # Octopus Energy Service
 
-A self-hosted, private REST service for UK Octopus Energy consumption, tariff rates,
-SQLite history, estimated costs and import habits, with a Home Assistant REST package.
-It is not an official Octopus product or a Home Assistant custom integration.
+A self-hosted, authenticated REST service for UK Octopus Energy consumption, tariff rates,
+SQLite history, estimated costs and import habits. Home Assistant OS installation uses
+an app/add-on plus a HACS custom integration with UI setup and native sensors.
+Standalone Python/Docker and the original REST YAML package remain available.
+This is an independent project, not an official Octopus product.
+
+## Home Assistant OS quick start
+
+1. Add this public repository to the **Apps/Add-on Store repositories**:
+   `https://github.com/sebbyyys/octopus-energy-service`.
+2. Install **Octopus Energy Service**, configure its protected service token and your
+   Octopus API key/account number, then start it. The add-on keeps history in `/data`;
+   no separate Docker server or manual YAML sensor package is required.
+3. In HACS, add the same repository as a custom repository of category **Integration**
+   and install **Octopus Energy Service**. Restart Home Assistant Core when prompted.
+4. In **Settings → Devices & services → Add integration**, select **Octopus Energy
+   Service**, enter the add-on's internal API base URL and matching service token.
+   The native sensor entities are created automatically.
+
+Follow the [HA OS app guide](docs/haos-addon.md) and
+[HACS integration guide](docs/hacs-integration.md) for exact options, networking,
+backup, configuration and troubleshooting. This integration uses the separate domain
+`octopus_energy_service`; it does not replace existing `octopus_energy` integrations.
+Choose the native integration **or** the legacy REST YAML package for a given service
+unless you intentionally want duplicate sensor sets.
 
 - Electricity import/export and gas, discovered through your account's meters and agreements.
 - Idempotent history refresh: supplier corrections replace earlier interval values.
@@ -87,6 +109,7 @@ Tests are offline, with synthetic HTTP fixtures and temporary SQLite databases.
 Passing example tests does not imply live supplier-account verification, live HA
 configuration/rendering or a completed Docker build on your host.
 
-[MIT license](LICENSE). The CI workflow is a local file only. Creating a repository,
-setting a remote, enabling GitHub integrations, pushing or publishing requires explicit
-approval; none is needed for local use.
+[MIT license](LICENSE). This repository is public and includes CI, a Home Assistant OS
+app repository and a HACS custom integration. Publishing source does not deploy a service,
+configure customer credentials or certify live supplier-account data. Never commit `.env`,
+Home Assistant config entries, databases, exports or private installation logs.

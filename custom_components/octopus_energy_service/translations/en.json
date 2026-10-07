@@ -1,0 +1,41 @@
+{
+  "title": "Octopus Energy Service",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Octopus Energy Service",
+        "description": "Use the root URL reachable from Home Assistant (not /v1/home-assistant). Enter the local service token, not your Octopus API key. Use HTTPS on untrusted networks.",
+        "data": {
+          "base_url": "API base URL",
+          "token": "Service token"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Replace service token",
+        "description": "Enter the new token for your existing local service. The old token is never shown.",
+        "data": {
+          "token": "Service token"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure service connection",
+        "description": "Change the root API URL and enter its service token. Existing entity IDs are preserved.",
+        "data": {
+          "base_url": "API base URL",
+          "token": "Service token"
+        }
+      }
+    },
+    "error": {
+      "invalid_url": "Enter an HTTP(S) root URL without user credentials, a path, query or fragment.",
+      "invalid_auth": "The service token is missing, invalid or rejected.",
+      "cannot_connect": "Cannot read the authenticated service snapshot. Check connectivity, TLS and the service. Redirects are not accepted.",
+      "already_configured": "Another entry already uses this service URL."
+    },
+    "abort": {
+      "already_configured": "This service URL is already configured.",
+      "reauth_successful": "Service token updated successfully.",
+      "reconfigure_successful": "Service connection updated successfully."
+    }
+  }
+}

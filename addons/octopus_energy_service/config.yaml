@@ -1,0 +1,52 @@
+name: Octopus Energy Service
+version: "0.2.0"
+slug: octopus_energy_service
+description: Private UK Octopus Energy API with persistent history and estimated costs
+url: https://github.com/sebbyyys/octopus-energy-service
+arch:
+  - amd64
+  - aarch64
+startup: services
+boot: auto
+init: true
+stage: experimental
+backup: cold
+timeout: 30
+host_network: false
+hassio_api: false
+homeassistant_api: false
+docker_api: false
+auth_api: false
+full_access: false
+ingress: false
+apparmor: true
+ports:
+  8080/tcp: null
+ports_description:
+  8080/tcp: Optional LAN API access; leave disabled for Home Assistant internal access
+options:
+  service_token: ""
+  api_key: ""
+  account_number: ""
+  timezone: Europe/London
+  sync_interval_seconds: 1800
+  initial_days: 90
+  lookback_days: 7
+  payment_method: DIRECT_DEBIT
+  gas_units: []
+  calorific_value: 39.2
+  correction_factor: 1.02264
+schema:
+  service_token: password
+  api_key: password?
+  account_number: str?
+  timezone: str
+  sync_interval_seconds: int(300,86400)
+  initial_days: int(1,730)
+  lookback_days: int(1,730)
+  payment_method: list(DIRECT_DEBIT|NON_DIRECT_DEBIT)
+  gas_units:
+    - meter_id: str
+      unit: list(kwh|m3)
+  calorific_value: float(0.001,100)
+  correction_factor: float(0.001,2)

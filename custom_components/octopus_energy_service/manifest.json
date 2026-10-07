@@ -1,0 +1,12 @@
+{
+  "domain": "octopus_energy_service",
+  "name": "Octopus Energy Service",
+  "codeowners": ["@sebbyyys"],
+  "config_flow": true,
+  "documentation": "https://github.com/sebbyyys/octopus-energy-service/blob/main/docs/hacs-integration.md",
+  "integration_type": "service",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/sebbyyys/octopus-energy-service/issues",
+  "requirements": [],
+  "version": "0.2.0"
+}
