@@ -1,0 +1,40 @@
+# Local repo-ready CI only: adding this file does not create a GitHub integration.
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.11.6"
+          enable-cache: true
+      - run: uv sync --locked --group dev
+      - run: uv run --locked ruff check .
+      - run: uv run --locked pytest --cov=octopus_service --cov-report=term-missing
+      - run: uv build --no-sources
+      - name: Validate Compose without credentials
+        run: cp .env.example .env && docker compose --env-file .env.example config --quiet
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build locked non-root runtime image (no publish)
+        run: docker build --tag octopus-energy-service:ci .

@@ -1,0 +1,195 @@
+# Copy to /config/packages/octopus.yaml; see docs/home-assistant.md.
+# Cumulative totals can be corrected downward. Never use total_increasing.
+# Rolling period totals intentionally have no state_class/last_reset.
+rest:
+  - resource: !secret octopus_service_url
+    method: GET
+    headers:
+      Authorization: !secret octopus_service_authorization
+      Accept: application/json
+    verify_ssl: true
+    scan_interval: 300
+    timeout: 20
+    sensor:
+      - name: Octopus Service Status
+        unique_id: octopus_service_status
+        availability: "{{ value_json is defined and value_json is mapping }}"
+        value_template: >-
+          {% if value_json is defined and value_json is mapping %}
+            {{ 'stale' if value_json.get('stale', true) else
+               ('ready' if value_json.get('available', false) else 'no_data') }}
+          {% else %}unknown{% endif %}
+        json_attributes:
+          - available
+          - stale
+          - last_sync
+          - latest_reading
+          - currency
+          - timezone
+          - quality
+      - name: Octopus Electricity Total
+        unique_id: octopus_service_electricity_total_kwh
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('electricity', {}).get('total_kwh') is not none }}
+        value_template: >-
+          {{ value_json.get('electricity', {}).get('total_kwh') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('electricity', {}).get('total_kwh') is not none else 'unknown' }}
+        device_class: energy
+        unit_of_measurement: kWh
+        state_class: total
+      - name: Octopus Electricity Today
+        unique_id: octopus_service_electricity_today_kwh
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('electricity', {}).get('today_kwh') is not none }}
+        value_template: >-
+          {{ value_json.get('electricity', {}).get('today_kwh') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('electricity', {}).get('today_kwh') is not none else 'unknown' }}
+        device_class: energy
+        unit_of_measurement: kWh
+      - name: Octopus Electricity Yesterday
+        unique_id: octopus_service_electricity_yesterday_kwh
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('electricity', {}).get('yesterday_kwh') is not none }}
+        value_template: >-
+          {{ value_json.get('electricity', {}).get('yesterday_kwh') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('electricity', {}).get('yesterday_kwh') is not none else 'unknown' }}
+        device_class: energy
+        unit_of_measurement: kWh
+      - name: Octopus Electricity Month
+        unique_id: octopus_service_electricity_month_kwh
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('electricity', {}).get('month_kwh') is not none }}
+        value_template: >-
+          {{ value_json.get('electricity', {}).get('month_kwh') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('electricity', {}).get('month_kwh') is not none else 'unknown' }}
+        device_class: energy
+        unit_of_measurement: kWh
+      - name: Octopus Electricity Current Rate
+        unique_id: octopus_service_electricity_current_rate_pence
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('electricity', {}).get('current_rate_pence') is not none }}
+        value_template: >-
+          {{ value_json.get('electricity', {}).get('current_rate_pence') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('electricity', {}).get('current_rate_pence') is not none else 'unknown' }}
+        unit_of_measurement: p/kWh
+        state_class: measurement
+        icon: mdi:cash
+      - name: Octopus Gas Total
+        unique_id: octopus_service_gas_total_kwh
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('gas', {}).get('total_kwh') is not none }}
+        value_template: >-
+          {{ value_json.get('gas', {}).get('total_kwh') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('gas', {}).get('total_kwh') is not none else 'unknown' }}
+        device_class: energy
+        unit_of_measurement: kWh
+        state_class: total
+      - name: Octopus Gas Today
+        unique_id: octopus_service_gas_today_kwh
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('gas', {}).get('today_kwh') is not none }}
+        value_template: >-
+          {{ value_json.get('gas', {}).get('today_kwh') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('gas', {}).get('today_kwh') is not none else 'unknown' }}
+        device_class: energy
+        unit_of_measurement: kWh
+      - name: Octopus Gas Yesterday
+        unique_id: octopus_service_gas_yesterday_kwh
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('gas', {}).get('yesterday_kwh') is not none }}
+        value_template: >-
+          {{ value_json.get('gas', {}).get('yesterday_kwh') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('gas', {}).get('yesterday_kwh') is not none else 'unknown' }}
+        device_class: energy
+        unit_of_measurement: kWh
+      - name: Octopus Gas Month
+        unique_id: octopus_service_gas_month_kwh
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('gas', {}).get('month_kwh') is not none }}
+        value_template: >-
+          {{ value_json.get('gas', {}).get('month_kwh') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('gas', {}).get('month_kwh') is not none else 'unknown' }}
+        device_class: energy
+        unit_of_measurement: kWh
+      - name: Octopus Gas Current Rate
+        unique_id: octopus_service_gas_current_rate_pence
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('gas', {}).get('current_rate_pence') is not none }}
+        value_template: >-
+          {{ value_json.get('gas', {}).get('current_rate_pence') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('gas', {}).get('current_rate_pence') is not none else 'unknown' }}
+        unit_of_measurement: p/kWh
+        state_class: measurement
+        icon: mdi:cash
+      - name: Octopus Export Total
+        unique_id: octopus_service_export_total_kwh
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('export', {}).get('total_kwh') is not none }}
+        value_template: >-
+          {{ value_json.get('export', {}).get('total_kwh') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('export', {}).get('total_kwh') is not none else 'unknown' }}
+        device_class: energy
+        unit_of_measurement: kWh
+        state_class: total
+      - name: Octopus Export Today
+        unique_id: octopus_service_export_today_kwh
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('export', {}).get('today_kwh') is not none }}
+        value_template: >-
+          {{ value_json.get('export', {}).get('today_kwh') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('export', {}).get('today_kwh') is not none else 'unknown' }}
+        device_class: energy
+        unit_of_measurement: kWh
+      - name: Octopus Cost Today Estimate
+        unique_id: octopus_service_cost_today_gbp
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('cost', {}).get('today_gbp') is not none }}
+        value_template: >-
+          {{ value_json.get('cost', {}).get('today_gbp') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('cost', {}).get('today_gbp') is not none else 'unknown' }}
+        device_class: monetary
+        unit_of_measurement: GBP
+      - name: Octopus Cost Yesterday Estimate
+        unique_id: octopus_service_cost_yesterday_gbp
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('cost', {}).get('yesterday_gbp') is not none }}
+        value_template: >-
+          {{ value_json.get('cost', {}).get('yesterday_gbp') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('cost', {}).get('yesterday_gbp') is not none else 'unknown' }}
+        device_class: monetary
+        unit_of_measurement: GBP
+      - name: Octopus Cost Week Estimate
+        unique_id: octopus_service_cost_week_gbp
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('cost', {}).get('week_gbp') is not none }}
+        value_template: >-
+          {{ value_json.get('cost', {}).get('week_gbp') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('cost', {}).get('week_gbp') is not none else 'unknown' }}
+        device_class: monetary
+        unit_of_measurement: GBP
+      - name: Octopus Cost Month Estimate
+        unique_id: octopus_service_cost_month_gbp
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('cost', {}).get('month_gbp') is not none }}
+        value_template: >-
+          {{ value_json.get('cost', {}).get('month_gbp') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('cost', {}).get('month_gbp') is not none else 'unknown' }}
+        device_class: monetary
+        unit_of_measurement: GBP
+      - name: Octopus Cost Previous Month Estimate
+        unique_id: octopus_service_cost_previous_month_gbp
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('cost', {}).get('previous_month_gbp') is not none }}
+        value_template: >-
+          {{ value_json.get('cost', {}).get('previous_month_gbp') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('cost', {}).get('previous_month_gbp') is not none else 'unknown' }}
+        device_class: monetary
+        unit_of_measurement: GBP
+      - name: Octopus Habits Peak Hour
+        unique_id: octopus_service_habits_peak_hour
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('habits', {}).get('peak_hour') is not none }}
+        value_template: >-
+          {{ value_json.get('habits', {}).get('peak_hour') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('habits', {}).get('peak_hour') is not none else 'unknown' }}
+        icon: mdi:clock-outline
+      - name: Octopus Habits Baseload Estimate
+        unique_id: octopus_service_habits_baseload_kw
+        availability: >-
+          {{ value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('habits', {}).get('baseload_kw') is not none }}
+        value_template: >-
+          {{ value_json.get('habits', {}).get('baseload_kw') if value_json is defined and value_json is mapping and value_json.get('available', false) and not value_json.get('stale', true) and value_json.get('habits', {}).get('baseload_kw') is not none else 'unknown' }}
+        device_class: power
+        unit_of_measurement: kW
+      - name: Octopus Last Sync
+        unique_id: octopus_service_last_sync
+        device_class: timestamp
+        availability: "{{ value_json is defined and value_json is mapping and value_json.get('last_sync') is not none }}"
+        value_template: "{{ value_json.get('last_sync') if value_json is defined and value_json is mapping and value_json.get('last_sync') is not none else 'unknown' }}"
+      - name: Octopus Latest Reading
+        unique_id: octopus_service_latest_reading
+        device_class: timestamp
+        availability: "{{ value_json is defined and value_json is mapping and value_json.get('latest_reading') is not none }}"
+        value_template: "{{ value_json.get('latest_reading') if value_json is defined and value_json is mapping and value_json.get('latest_reading') is not none else 'unknown' }}"

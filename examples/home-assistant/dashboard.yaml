@@ -1,0 +1,60 @@
+# Native Lovelace cards only. Entity IDs assume a first-time package installation.
+# If Home Assistant has assigned different IDs, replace these with your registry IDs.
+title: Octopus Energy
+views:
+  - title: Energy
+    path: energy
+    icon: mdi:lightning-bolt
+    cards:
+      - type: markdown
+        content: >-
+          ## Delayed meter readings, not live power
+          Costs and baseload are estimates. Check status, latest reading and quality
+          before interpreting gaps. Cumulative totals cover stored history and may
+          decrease after supplier corrections; they are not physical meter registers.
+      - type: entities
+        title: Data health
+        show_header_toggle: false
+        entities:
+          - sensor.octopus_service_status
+          - sensor.octopus_last_sync
+          - sensor.octopus_latest_reading
+      - type: entities
+        title: Electricity import
+        show_header_toggle: false
+        entities:
+          - sensor.octopus_electricity_total
+          - sensor.octopus_electricity_today
+          - sensor.octopus_electricity_yesterday
+          - sensor.octopus_electricity_month
+          - sensor.octopus_electricity_current_rate
+      - type: entities
+        title: Gas (explicit units required)
+        show_header_toggle: false
+        entities:
+          - sensor.octopus_gas_total
+          - sensor.octopus_gas_today
+          - sensor.octopus_gas_yesterday
+          - sensor.octopus_gas_month
+          - sensor.octopus_gas_current_rate
+      - type: entities
+        title: Electricity export
+        show_header_toggle: false
+        entities:
+          - sensor.octopus_export_total
+          - sensor.octopus_export_today
+      - type: entities
+        title: Net costs (estimates including standing charges)
+        show_header_toggle: false
+        entities:
+          - sensor.octopus_cost_today_estimate
+          - sensor.octopus_cost_yesterday_estimate
+          - sensor.octopus_cost_week_estimate
+          - sensor.octopus_cost_month_estimate
+          - sensor.octopus_cost_previous_month_estimate
+      - type: entities
+        title: Import habits (estimates, not instantaneous power)
+        show_header_toggle: false
+        entities:
+          - sensor.octopus_habits_peak_hour
+          - sensor.octopus_habits_baseload_estimate
